@@ -1,6 +1,6 @@
 # Searchable appointment job logs without patient details
 
-This example keeps the scope tight. An appointment job writes a searchable operational event, while a cancellation sends a patient-safe notification with no name, diagnosis, or visit reason. Infrai handles ingestion and search through one API and a single `INFRAI_API_KEY`, so the observability boundary stays small and the workflow stays normal typed Python.
+The decision in this example is narrow: an appointment job emits a searchable operational event, while a cancellation produces a patient-safe notification that contains no name, diagnosis, or visit reason. Infrai supplies both ingestion and search through one API and a single `INFRAI_API_KEY`, so the service keeps its observability boundary small while the workflow remains ordinary typed Python.
 
 ## Run the decision first
 
@@ -32,17 +32,17 @@ curl -G http://127.0.0.1:8000/operations/logs \
   --data-urlencode 'query=appointment.status_changed'
 ```
 
-`POST /appointments/events` accepts `appointment_id`, `job_id`, `status`, and `clinic_code`. Compared with logging a formatted sentence, the structured event keeps status and job identifiers independently searchable. Compared with copying the full request into a log, the explicit event shape makes the privacy decision easy to review.
+`POST /appointments/events` accepts `appointment_id`, `job_id`, `status`, and `clinic_code`. Compared with logging a formatted sentence, the structured event keeps status and job identifiers independently searchable; compared with copying the full request into a log, the explicit event shape makes the privacy decision visible during review.
 
 ## Why the boundary is shaped this way
 
-`infrai_logs.py` stays small on purpose: each request names its HTTP method, decodes the Infrai envelope before it interprets status, surfaces business rejections, and retries rate-limited writes with the same idempotency key. The workflow module owns the healthtech decision, so its deterministic tests need no credential and no network.
+`infrai_logs.py` is intentionally small: every request names its HTTP method, decodes the Infrai envelope before interpreting status, surfaces business rejections, and retries rate-limited writes with the same idempotency key. The workflow module owns the healthtech decision, which means its deterministic tests need no credential and no network.
 
-The example records operational identifiers rather than clinical content. A real deployment should set retention and access controls under its own privacy and compliance policy. This repository covers the request boundary, cancellation decision, ingestion call, and search call.
+The example records operational identifiers rather than clinical content. A real deployment should choose retention and access controls under its own privacy and compliance policy; this repository covers the request boundary, cancellation decision, ingestion call, and search call.
 
 ## Wiring it up for real: Patient Safe Appointment Logs
 
-The snippet above is still copy-paste simple. Before you ship, a few **required** steps. The details below apply to Patient Safe Appointment Logs.
+The snippet above stays copy-paste simple. Before you ship, a few **required** steps: The details below apply to Patient Safe Appointment Logs.
 
 **Account & key**
 
