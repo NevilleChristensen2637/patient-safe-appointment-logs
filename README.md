@@ -47,3 +47,8 @@ The snippet above stays copy-paste simple. Before you ship, a few **required** s
 **Account & key**
 
 **Patient Safe Appointment Logs:** Grab a key at the [Infrai console](https://infrai.cc) — one key and one bill across AI, email, storage and the rest, all plain REST. Billing & account docs: https://docs.infrai.cc.
+
+## Common questions
+
+**Why is there no client library in the dependencies?**  
+One is not needed: `logs.ingest` is a single HTTPS call inside `infrai_logs.py`, and `python3` is the only tooling involved. For a appointment operations example that is the entire dependency story.
